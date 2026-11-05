@@ -30,7 +30,8 @@ function ContributionsHandler(db) {
         /*jslint evil: true */
         // Insecure use of eval() to parse inputs
         const preTax = eval(req.body.preTax);
-        const afterTax = eval(req.body.afterTax);
+        // Parse as a base-10 integer instead of evaluating user input as code
+        const afterTax = parseInt(req.body.afterTax, 10);
         const roth = eval(req.body.roth);
 
         /*
