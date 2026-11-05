@@ -52,4 +52,34 @@ describe("/contributions behaviour", () => {
 
     cy.url().should("include", "contributions");
   });
+
+  it("Should not evaluate code submitted in the afterTax field", () => {
+    cy.userSignIn();
+    cy.visitPage("/contributions");
+    cy.get("input[name='afterTax']")
+      .invoke("attr", "type", "text")
+      .clear()
+      .type("process.exit(1)");
+
+    cy.get("button[type='submit']")
+      .click();
+
+    // Payload is treated as a non-numeric value and rejected, server stays up
+    cy.contains("Invalid contribution percentages");
+    cy.url().should("include", "contributions");
+  });
+
+  it("Should reject an arithmetic expression in the afterTax field", () => {
+    cy.userSignIn();
+    cy.visitPage("/contributions");
+    cy.get("input[name='afterTax']")
+      .invoke("attr", "type", "text")
+      .clear()
+      .type("(function(){return 5})()");
+
+    cy.get("button[type='submit']")
+      .click();
+
+    cy.contains("Invalid contribution percentages");
+  });
 });
