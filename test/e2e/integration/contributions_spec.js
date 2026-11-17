@@ -52,4 +52,35 @@ describe("/contributions behaviour", () => {
 
     cy.url().should("include", "contributions");
   });
+
+  it("Should reject a roth value containing code instead of evaluating it", () => {
+    cy.userSignIn();
+    cy.visitPage("/contributions");
+    cy.get("table")
+      .find("input")
+      .eq(2)
+      .clear()
+      .type("process.exit(1)");
+
+    cy.get("button[type='submit']")
+      .click();
+
+    // Server must still be alive and report the value as invalid
+    cy.contains("Invalid contribution percentages");
+  });
+
+  it("Should reject a negative roth value", () => {
+    cy.userSignIn();
+    cy.visitPage("/contributions");
+    cy.get("table")
+      .find("input")
+      .eq(2)
+      .clear()
+      .type("-5");
+
+    cy.get("button[type='submit']")
+      .click();
+
+    cy.contains("Invalid contribution percentages");
+  });
 });
