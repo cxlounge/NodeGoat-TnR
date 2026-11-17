@@ -31,7 +31,8 @@ function ContributionsHandler(db) {
         // Insecure use of eval() to parse inputs
         const preTax = eval(req.body.preTax);
         const afterTax = eval(req.body.afterTax);
-        const roth = eval(req.body.roth);
+        // Parse as a number instead of evaluating user input as code
+        const roth = parseInt(req.body.roth, 10);
 
         /*
         //Fix for A1 -1 SSJS Injection attacks - uses alternate method to eval
