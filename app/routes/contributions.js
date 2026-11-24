@@ -29,7 +29,8 @@ function ContributionsHandler(db) {
 
         /*jslint evil: true */
         // Insecure use of eval() to parse inputs
-        const preTax = eval(req.body.preTax);
+        // Fix for SSJS injection: parse as a base-10 integer instead of using eval()
+        const preTax = parseInt(req.body.preTax, 10);
         const afterTax = eval(req.body.afterTax);
         const roth = eval(req.body.roth);
 

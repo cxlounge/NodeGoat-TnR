@@ -52,4 +52,21 @@ describe("/contributions behaviour", () => {
 
     cy.url().should("include", "contributions");
   });
+
+  it("Should not execute code injected in the preTax field", () => {
+    cy.userSignIn();
+    cy.visitPage("/contributions");
+    cy.get("table")
+      .find("input")
+      .first()
+      .clear()
+      .type("process.exit(1)");
+
+    cy.get("button[type='submit']")
+      .click();
+
+    // The payload is treated as data: rejected as invalid, and the server stays up
+    cy.contains("Invalid contribution percentages");
+    cy.url().should("include", "contributions");
+  });
 });
